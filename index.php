@@ -27,11 +27,11 @@ include 'dbconfig.php';
                         <div id="countdown" class="float-end"></div>
                     </div>
                 <?php } ?>
-                <form action="<?php echo isset($_GET['action']) && $_GET['action'] == 'edit_product' ? 'app.php?action=update_product&id=' . $_GET['id'] : 'app.php?action=add_product'; ?>" method="post" class="pb-4">
+                <form action="<?php echo isset($_GET['action']) && $_GET['action'] == 'edit_product' ? 'app.php?action=update_product&pid=' . $_GET['pid'] : 'index.php?action=add_product'; ?>" method="post" class="pb-4">
                     <div class="form-group">
                         <?php
                         if (isset($_GET['action']) && $_GET['action'] == 'edit_product') {
-                            $product_id = $_GET['id'];
+                            $product_id = $_GET['pid'];
                             $sql = $conn->prepare("SELECT * FROM products WHERE unique_id = ?");
                             $sql->bind_param('s', $product_id);
                             $sql->execute();
@@ -39,15 +39,39 @@ include 'dbconfig.php';
                             $value = $arr->fetch_assoc();
                             if ($value) {
                                 $name = $value['name'];
+                                $qty = $value['quantity'];
                             } else {
                                 $name = '';
+                                $qty = '';
                             }
                         }
                         ?>
                         <label class="form-label fw-bold" for="product_name"><?php echo isset($_GET['action']) && $_GET['action'] == 'edit_product' ? 'Edit' : 'Add'; ?> Product</label>
-                        <div class="d-flex">
-                            <input required type="text" value="<?php echo isset($_GET['action']) && $_GET['action'] == 'edit_product' ? $name : ''; ?>" name="product_name" id="product_name" class="form-control" placeholder="Enter product name">
-                            <button type="submit" class="btn btn-primary col-2 ms-3"><?php echo isset($_GET['action']) && $_GET['action'] == 'edit_product' ? 'Update' : 'Add'; ?></button>
+                        <div class="row">
+                            <div class="col-7">
+                                <input class="form-control" required type="text" value="<?php echo isset($_GET['action']) && $_GET['action'] == 'edit_product' ? $name : ''; ?>" name="product_name" id="product_name" placeholder="Enter product name">
+                            </div>
+                            <div class="col-3">
+                                <input class="form-control" required type="text" value="<?php echo isset($_GET['action']) && $_GET['action'] == 'edit_product' ? $qty : ''; ?>" name="product_qty" id="product_qty" placeholder="Enter product Qty">
+                            </div>
+                            <button type="submit" class="btn btn-primary col-2"><?php echo isset($_GET['action']) && $_GET['action'] == 'edit_product' ? 'Update' : 'Add'; ?></button>
+                        </div>
+                        <div class="row">
+                            <?php
+                            $fname = 'shopdb.txt';
+                            $fr = fopen($fname, 'r');
+                            $fw = fopen($fname, 'a');
+                            $sp = '\n ';
+                            if (isset($_POST)) {
+                                $product = $_POST['product_name'];
+                                $qty = $_POST['product_qty'];
+                                $save = $product . '-' . $qty . $sp;
+                                fwrite($fw, $save);
+                            }
+                            $contents = fread($fr, filesize($fname));
+                            $lines = explode('\n', $contents);
+                            fclose($fr);
+                            ?>
                         </div>
                     </div>
                 </form>
@@ -57,30 +81,35 @@ include 'dbconfig.php';
                     </div>
                     <div class="card-body">
                         <?php
-                        $query = $conn->prepare("SELECT * FROM products");
-                        $query->execute();
-                        $row = $query->get_result();
+                        // $query = $conn->prepare("SELECT * FROM products");
+                        // $query->execute();
+                        // $row = $query->get_result();
                         ?>
                         <table class="table">
                             <thead>
                                 <th class="col-1">SN</th>
-                                <th class="col-8">Name</th>
+                                <th class="col-5">Name</th>
+                                <th class="col-3 text-center">Qty</th>
                                 <th class="col-3 text-center">Action</th>
                             </thead>
                             <tbody>
                                 <?php
-                                if ($row) {
-                                    foreach ($row as $key => $product) {
-                                        echo '
+                                if ($lines) {
+                                    foreach ($lines as $key => $line) {
+                                        $product = explode('-', $line);
+                                        // foreach ($row as $key => $product) {
+                                            echo '
                                 <tr>
                                     <td>' . ++$key . '</td>
-                                    <td>' . $product['name'] . '</td>
+                                    <td>' . $product[0] . '</td>
+                                    <td>' . $product[0] . '</td>
                                     <td class="text-center">
-                                        <a href="index.php?action=edit_product&id=' . $product['unique_id'] . '" class="btn btn-sm btn-primary">Edit</a>
-                                        <a href="app.php?action=delete_product&id=' . $product['unique_id'] . '" class="btn btn-sm btn-danger">Delete</a>
+                                        <a href="index.php?action=edit_product&pid=' . $product[0] . '" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="app.php?action=delete_product&pid=' . $product[0] . '" class="btn btn-sm btn-danger">Delete</a>
                                     </td>
                                 </tr>
                                 ';
+                                        // }
                                     }
                                 }
                                 ?>
