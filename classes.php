@@ -17,11 +17,12 @@ class Admin
     function Store()
     {
         if (isset($_POST)) {
-            $unique_id = uniqid();
+            $unique_id = uniqid(15);
             $user = 'Automatic';
             $product = $_POST['product_name'];
-            $sql = $this->db->prepare("INSERT INTO products (unique_id, name, added_by) VALUES (?, ?, ?)");
-            $sql->execute(array($unique_id, $product, $user,));
+            $qty = $_POST['product_qty'];
+            $sql = $this->db->prepare("INSERT INTO products (unique_id, name, quantity, added_by) VALUES (?, ?, ?, ?)");
+            $sql->execute(array($unique_id, $product, $qty, $user,));
             if ($sql) {
                 return "<script>
                             location.href = 'index.php?status=success&msg=".base64_encode(urlencode('Product Added Succesful!'))."';
@@ -33,7 +34,7 @@ class Admin
     function Update()
     {
         if (isset($_POST)) {
-            $unique_id = $_GET['id'];
+            $unique_id = $_GET['pid'];
             $query = $this->db->prepare("SELECT * FROM products WHERE unique_id = ?");
             $query->bind_param('s', $unique_id);
             $query->execute();
@@ -41,8 +42,9 @@ class Admin
             
             if ($row->num_rows == 1) {
                 $product = $_POST['product_name'];
-                $sql = $this->db->prepare("UPDATE products SET name = ? WHERE unique_id = ?");
-                $sql->bind_param('ss', $product, $unique_id);
+                $qty = $_POST['product_qty'];
+                $sql = $this->db->prepare("UPDATE products SET name = ?, quantity = ? WHERE unique_id = ?");
+                $sql->bind_param('sss', $product, $qty, $unique_id);
                 if ($sql->execute()) {
                     return "<script>
                                 location.href = 'index.php?status=success&msg=".base64_encode(urlencode('Product Updated Succesful!'))."';
@@ -63,7 +65,7 @@ class Admin
     function Delete()
     {
         if (isset($_POST)) {
-            $unique_id = $_GET['id'];
+            $unique_id = $_GET['pid'];
             $query = $this->db->prepare("SELECT * FROM products WHERE unique_id = ?");
             $query->bind_param('s', $unique_id);
             $query->execute();
