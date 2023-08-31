@@ -58,19 +58,19 @@ include 'dbconfig.php';
                         </div>
                         <div class="row">
                             <?php
-                            $fname = 'shopdb.txt';
-                            $fr = fopen($fname, 'r');
-                            $fw = fopen($fname, 'a');
-                            $sp = '\n ';
-                            if (isset($_POST)) {
-                                $product = $_POST['product_name'];
-                                $qty = $_POST['product_qty'];
-                                $save = $product . '-' . $qty . $sp;
-                                fwrite($fw, $save);
-                            }
-                            $contents = fread($fr, filesize($fname));
-                            $lines = explode('\n', $contents);
-                            fclose($fr);
+                            // $fname = 'shopdb.txt';
+                            // $fr = fopen($fname, 'r');
+                            // $fw = fopen($fname, 'a');
+                            // $sp = '\n ';
+                            // if (isset($_POST)) {
+                            //     $product = $_POST['product_name'];
+                            //     $qty = $_POST['product_qty'];
+                            //     $save = $product . '-' . $qty . $sp;
+                            //     fwrite($fw, $save);
+                            // }
+                            // $contents = fread($fr, filesize($fname));
+                            // $lines = explode('\n', $contents);
+                            // fclose($fr);
                             ?>
                         </div>
                     </div>
@@ -81,9 +81,9 @@ include 'dbconfig.php';
                     </div>
                     <div class="card-body">
                         <?php
-                        // $query = $conn->prepare("SELECT * FROM products");
-                        // $query->execute();
-                        // $row = $query->get_result();
+                        $query = $conn->prepare("SELECT * FROM products");
+                        $query->execute();
+                        $row = $query->get_result();
                         ?>
                         <table class="table">
                             <thead>
