@@ -94,23 +94,23 @@ include 'dbconfig.php';
                             </thead>
                             <tbody>
                                 <?php
-                                if ($lines) {
-                                    foreach ($lines as $key => $line) {
-                                        $product = explode('-', $line);
-                                        // foreach ($row as $key => $product) {
-                                            echo '
+                                if ($row) {
+                                    // foreach ($lines as $key => $line) {
+                                    // $product = explode('-', $line);
+                                    foreach ($row as $key => $product) {
+                                        echo '
                                 <tr>
                                     <td>' . ++$key . '</td>
-                                    <td>' . $product[0] . '</td>
-                                    <td>' . $product[0] . '</td>
+                                    <td>' . $product['name'] . '</td>
+                                    <td>' . $product['Qty'] . '</td>
                                     <td class="text-center">
-                                        <a href="index.php?action=edit_product&pid=' . $product[0] . '" class="btn btn-sm btn-primary">Edit</a>
-                                        <a href="app.php?action=delete_product&pid=' . $product[0] . '" class="btn btn-sm btn-danger">Delete</a>
+                                        <a href="index.php?action=edit_product&pid=' . $product['id'] . '" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="app.php?action=delete_product&pid=' . $product['id'] . '" class="btn btn-sm btn-danger">Delete</a>
                                     </td>
                                 </tr>
                                 ';
-                                        // }
                                     }
+                                    // }
                                 }
                                 ?>
                             </tbody>
